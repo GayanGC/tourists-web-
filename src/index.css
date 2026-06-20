@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Playfair Display', serif;
+  --font-sans: 'Outfit', sans-serif;
+
+  /* Custom Animations in Tailwind v4 style */
+  --animate-map-glow: map-glow 4s linear infinite;
+  --animate-slide-in: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes map-glow {
+    to {
+      stroke-dashoffset: -40;
+    }
+  }
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+/* Custom scrollbar and smoothness */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Offset for navbar */
+}
+
+/* Custom Animations */
+.animate-map-glow {
+  animation: map-glow 4s linear infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth custom range slider thumb styling */
+input[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 5px;
+  border: 2px solid #0f172a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0d5c3a;
+}
