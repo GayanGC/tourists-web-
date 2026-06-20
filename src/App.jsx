@@ -73,14 +73,14 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
             
-            {/* About Lanka Horizon */}
+            {/* About Tharindu Tours */}
             <div className="md:col-span-5 text-left">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-base">
-                  LH
+                  TT
                 </div>
                 <span className="text-white font-bold font-display text-lg tracking-wider">
-                  LANKA HORIZON TOURS
+                  THARINDU TOURS
                 </span>
               </div>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
@@ -177,7 +177,7 @@ export default function App() {
           {/* Bottom Row */}
           <div className="border-t border-slate-900 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
             <p>
-              &copy; {new Date().getFullYear()} Lanka Horizon Tours. All rights reserved.
+              &copy; {new Date().getFullYear()} Tharindu Tours. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-slate-500">
               <span className="flex items-center gap-1">

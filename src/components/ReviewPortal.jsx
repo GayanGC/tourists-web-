@@ -8,7 +8,7 @@ const INITIAL_REVIEWS = [
     country: "United Kingdom",
     rating: 5,
     date: "May 2026",
-    comment: "Amazing 10-day trip with Lanka Horizon! The KDH van was spotlessly clean and the dual AC worked wonders in the heat. Our driver was incredibly polite, spoke great English, and recommended the best curry spots in Ella.",
+    comment: "Amazing 10-day trip with Tharindu Tours! The KDH van was spotlessly clean and the dual AC worked wonders in the heat. Our driver was incredibly polite, spoke great English, and recommended the best curry spots in Ella.",
     image: "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=400&q=80"
   },
   {

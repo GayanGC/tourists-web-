@@ -42,7 +42,7 @@ export default function TrustBadges() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <span className="text-xs font-bold tracking-widest text-emerald-400 uppercase">
-            Why Book Lanka Horizon
+            Why Book Tharindu Tours
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold font-display tracking-tight text-white mt-2 mb-6">
             Direct Bookings, Direct Trust

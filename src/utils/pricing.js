@@ -1,4 +1,4 @@
-// Pricing, routes, and coordinate data for Lanka Horizon Tours
+// Pricing, routes, and coordinate data for Tharindu Tours
 
 export const EXCHANGE_RATE = 300; // 1 USD = 300 LKR
 

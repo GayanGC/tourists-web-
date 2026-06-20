@@ -34,7 +34,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
     }
 
     // Format WhatsApp Message
-    let text = `🌴 *Lanka Horizon Tours - Booking Request* 🌴\n\n`;
+    let text = `🌴 *Tharindu Tours - Booking Request* 🌴\n\n`;
     text += `👤 *Client Name:* ${formData.name}\n`;
     text += `📱 *WhatsApp:* ${formData.phone}\n`;
     text += `📅 *Start Date:* ${formData.startDate}\n\n`;
@@ -69,7 +69,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
       text += `💬 *Special Requests:* ${formData.notes}\n`;
     }
 
-    text += `⚡ _Sent from Lanka Horizon Web App_`;
+    text += `⚡ _Sent from Tharindu Tours Web App_`;
 
     const encodedText = encodeURIComponent(text);
     const whatsappURL = `https://wa.me/${DRIVER_CONTACT}?text=${encodedText}`;
@@ -258,7 +258,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
 
             {/* Note about direct contact */}
             <p className="text-[10px] text-slate-500 text-center leading-relaxed mt-2">
-              By clicking "Send Request", you will be redirected to chat directly with Lanka Horizon Tours on WhatsApp. We will confirm dates, pickup details, and complete your booking.
+              By clicking "Send Request", you will be redirected to chat directly with Tharindu Tours on WhatsApp. We will confirm dates, pickup details, and complete your booking.
             </p>
 
             {/* Submit Button */}
