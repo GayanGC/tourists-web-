@@ -84,7 +84,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
-                Sri Lanka's trusted independent private van operator. Offering direct, 0% commission bookings and customized private tours in a spacious, high-roof Toyota HiAce KDH van since 2015.
+                Discover Sri Lanka in Style with Premier Lanka Tours — your trusted independent private vehicle operator since 2015. Direct 0% commission bookings, a fleet of 4 vehicles, and a dedicated English-speaking driver-guide.
               </p>
               
               <div className="flex gap-4 text-xs font-bold text-emerald-400 uppercase tracking-widest">

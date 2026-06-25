@@ -61,7 +61,7 @@ export default function Navbar() {
                 PREMIER LANKA TOURS
               </span>
               <span className="text-[10px] text-amber-400 font-medium tracking-widest uppercase">
-                Private Van & Transfers
+                Discover Sri Lanka in Style
               </span>
             </div>
           </a>
