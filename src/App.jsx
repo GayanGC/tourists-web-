@@ -7,7 +7,7 @@ import TourPlanner from './components/TourPlanner';
 import ReviewPortal from './components/ReviewPortal';
 import BookingModal from './components/BookingModal';
 import Toast from './components/Toast';
-import { Phone, Mail, MapPin, Compass, ArrowUp, Heart } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowUp, Heart } from 'lucide-react';
 import { DRIVER_CONTACT } from './utils/pricing';
 
 export default function App() {
@@ -73,18 +73,18 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
             
-            {/* About Tharindu Tours */}
+            {/* About Premier Lanka Tours */}
             <div className="md:col-span-5 text-left">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-base">
-                  TT
+                  PLT
                 </div>
                 <span className="text-white font-bold font-display text-lg tracking-wider">
-                  THARINDU TOURS
+                  PREMIER LANKA TOURS
                 </span>
               </div>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
-                Sri Lanka's leading independent tourist van operator. Offering direct, 0% commission bookings and customized private tours in premium Toyota HiAce luxury vans since 2015.
+                Sri Lanka's trusted independent private van operator. Offering direct, 0% commission bookings and customized private tours in a spacious, high-roof Toyota HiAce KDH van since 2015.
               </p>
               
               <div className="flex gap-4 text-xs font-bold text-emerald-400 uppercase tracking-widest">
@@ -150,10 +150,10 @@ export default function App() {
                       Email Bookings
                     </span>
                     <a
-                      href="mailto:bookings@lankahorizontours.com"
+                      href="mailto:bookings@premierlankatours.com"
                       className="text-white font-semibold hover:text-emerald-400 transition-colors"
                     >
-                      bookings@lankahorizontours.com
+                      bookings@premierlankatours.com
                     </a>
                   </div>
                 </li>
@@ -177,7 +177,7 @@ export default function App() {
           {/* Bottom Row */}
           <div className="border-t border-slate-900 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
             <p>
-              &copy; {new Date().getFullYear()} Tharindu Tours. All rights reserved.
+              &copy; {new Date().getFullYear()} Premier Lanka Tours. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-slate-500">
               <span className="flex items-center gap-1">

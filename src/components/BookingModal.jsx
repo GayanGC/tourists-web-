@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Calendar, User, Phone, FileText, Send, Sparkles } from 'lucide-react';
-import { DRIVER_CONTACT, DESTINATIONS, START_COORDS, HOTEL_TIERS, EXCHANGE_RATE } from '../utils/pricing';
+import { DRIVER_CONTACT, DESTINATIONS, START_COORDS, EXCHANGE_RATE } from '../utils/pricing';
 
 export default function BookingModal({ isOpen, onClose, bookingDetails, triggerToast }) {
   if (!isOpen || !bookingDetails) return null;
@@ -34,7 +34,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
     }
 
     // Format WhatsApp Message
-    let text = `🌴 *Tharindu Tours - Booking Request* 🌴\n\n`;
+    let text = `🌴 *Premier Lanka Tours - Booking Request* 🌴\n\n`;
     text += `👤 *Client Name:* ${formData.name}\n`;
     text += `📱 *WhatsApp:* ${formData.phone}\n`;
     text += `📅 *Start Date:* ${formData.startDate}\n\n`;
@@ -51,25 +51,23 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
     } else {
       const start = START_COORDS[bookingDetails.startPoint]?.name || bookingDetails.startPoint;
       const stopsNames = bookingDetails.stops.map(s => DESTINATIONS[s]?.name || s).join(' ➔ ');
-      const hotelName = HOTEL_TIERS[bookingDetails.hotelTier]?.name || bookingDetails.hotelTier;
       
-      text += `🚍 *Service Type:* Multi-Day Tour (${bookingDetails.plannerType === 'preset' ? 'Curated Loop' : 'Custom Route'})\n`;
+      text += `🚍 *Service Type:* Multi-Day Private Van Tour (${bookingDetails.plannerType === 'preset' ? 'Curated Loop' : 'Custom Route'})\n`;
       text += `🛫 *Start Point:* ${start}\n`;
       text += `📍 *Stops:* ${stopsNames}\n`;
-      text += `⏳ *Duration:* ${bookingDetails.days} Days / ${bookingDetails.nights} Nights\n`;
-      text += `🏨 *Accommodation:* ${hotelName}\n\n`;
+      text += `⏳ *Duration:* ${bookingDetails.days} Days\n\n`;
     }
 
-    text += `💰 *All-Inclusive Flat Quote:* \n`;
+    text += `💰 *Private Van — All-Inclusive Flat Quote:*\n`;
     text += `• *USD Rate:* $${bookingDetails.priceUSD} USD\n`;
     text += `• *LKR Rate:* LKR ${(bookingDetails.priceUSD * EXCHANGE_RATE).toLocaleString()} LKR\n`;
-    text += `_(Includes luxury Toyota KDH van, driver, fuel, highway tolls, airport parking, driver lodging, and hotel rooms)_\n\n`;
+    text += `_(Includes private Toyota KDH van, driver, fuel, expressway tolls, airport parking & driver accommodation)_\n\n`;
 
     if (formData.notes.trim()) {
       text += `💬 *Special Requests:* ${formData.notes}\n`;
     }
 
-    text += `⚡ _Sent from Tharindu Tours Web App_`;
+    text += `⚡ _Sent from Premier Lanka Tours Web App_`;
 
     const encodedText = encodeURIComponent(text);
     const whatsappURL = `https://wa.me/${DRIVER_CONTACT}?text=${encodedText}`;
@@ -112,7 +110,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
         {/* Modal Body (Scrollable) */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {/* Invoice Summary Box */}
-          <div className="p-4 bg-slate-950/60 border border-slate-850 rounded-2xl">
+          <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
               Booking Quote Summary
             </h4>
@@ -136,7 +134,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
             ) : (
               <div className="space-y-1.5 text-xs text-slate-300">
                 <div>
-                  <span className="text-slate-400">Tour Loop:</span>{' '}
+                  <span className="text-slate-400">Tour Route:</span>{' '}
                   <span className="font-bold">
                     {bookingDetails.stops.map(s => DESTINATIONS[s]?.name || s).join(' ➔ ')}
                   </span>
@@ -144,13 +142,13 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
                 <div>
                   <span className="text-slate-400">Duration:</span>{' '}
                   <span className="font-semibold text-white">
-                    {bookingDetails.days} Days / {bookingDetails.nights} Nights
+                    {bookingDetails.days} Days
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Hotel Accommodation:</span>{' '}
+                  <span className="text-slate-400">Van Rate:</span>{' '}
                   <span className="font-semibold text-white">
-                    {HOTEL_TIERS[bookingDetails.hotelTier]?.name}
+                    ${bookingDetails.vehicleRatePerDay}/day (private van & driver)
                   </span>
                 </div>
               </div>
@@ -159,7 +157,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
             {/* Price tag */}
             <div className="mt-4 pt-3.5 border-t border-slate-900/50 flex justify-between items-baseline">
               <span className="text-[10px] uppercase font-bold text-slate-400">
-                Fixed Price (Tolls Included):
+                Fixed Van Rate (Tolls & Parking Included):
               </span>
               <div className="text-right">
                 <span className="text-xl font-bold font-display text-emerald-400">
@@ -250,7 +248,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
                   value={formData.notes}
                   onChange={handleInputChange}
                   rows="2"
-                  placeholder="Child seats, wheelchair accommodation, specific hotel requirements..."
+                  placeholder="Child seats, wheelchair access, pickup hotel name, specific pickup time..."
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-slate-950 text-sm font-medium transition-all resize-none"
                 ></textarea>
               </div>
@@ -258,7 +256,7 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
 
             {/* Note about direct contact */}
             <p className="text-[10px] text-slate-500 text-center leading-relaxed mt-2">
-              By clicking "Send Request", you will be redirected to chat directly with Tharindu Tours on WhatsApp. We will confirm dates, pickup details, and complete your booking.
+              By clicking "Send Request", you will be redirected to chat directly with Premier Lanka Tours on WhatsApp. We will confirm pickup time, route details, and complete your booking.
             </p>
 
             {/* Submit Button */}

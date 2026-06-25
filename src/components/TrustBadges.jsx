@@ -42,7 +42,7 @@ export default function TrustBadges() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <span className="text-xs font-bold tracking-widest text-emerald-400 uppercase">
-            Why Book Tharindu Tours
+            Why Book Premier Lanka Tours
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold font-display tracking-tight text-white mt-2 mb-6">
             Direct Bookings, Direct Trust
@@ -82,7 +82,7 @@ export default function TrustBadges() {
               {/* Using a high quality image of a Toyota HiAce KDH van model on the road or a mockup */}
               <img
                 src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80"
-                alt="Toyota KDH Luxury Van"
+                alt="Toyota KDH Premium Van"
                 className="w-full h-80 object-cover rounded-2xl shadow-lg border border-slate-700"
               />
               <div className="absolute bottom-6 left-6 z-20">
@@ -90,7 +90,7 @@ export default function TrustBadges() {
                   Premium Vehicle
                 </span>
                 <h4 className="text-2xl font-bold font-display text-white mt-2">
-                  Toyota HiAce KDH Luxury
+                  Toyota HiAce KDH — Spacious & High-Roof
                 </h4>
                 <p className="text-slate-300 text-xs mt-1">Super Long Wheelbase • High Roof</p>
               </div>
@@ -102,10 +102,10 @@ export default function TrustBadges() {
                 Fleet Spotlight
               </span>
               <h3 className="text-2xl sm:text-3xl font-bold font-display text-white mt-1 mb-4">
-                Travel Sri Lanka in First Class Comfort
+                Travel Sri Lanka in Comfort & Style
               </h3>
               <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8">
-                Our luxury Toyota HiAce KDH van is meticulously maintained, deep-cleaned before every tour, and specifically outfitted for tourists navigating Sri Lanka's tropical climate.
+                Our well-maintained, spacious Toyota HiAce KDH van is deep-cleaned before every tour and specifically outfitted for travelers navigating Sri Lanka's tropical climate.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

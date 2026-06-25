@@ -1,4 +1,4 @@
-// Pricing, routes, and coordinate data for Tharindu Tours
+// Pricing, routes, and coordinate data for Premier Lanka Tours
 
 export const EXCHANGE_RATE = 300; // 1 USD = 300 LKR
 
@@ -69,7 +69,7 @@ export const DESTINATIONS = {
   bentota: {
     name: "Bentota",
     coords: { x: 110, y: 420 },
-    description: "Thrilling water sports, river safaris, and luxury beach resorts.",
+    description: "Thrilling water sports, river safaris, and premium beach resorts.",
     rates: {
       bia: { priceUSD: 65, time: "1h 45m", distance: "110 km" },
       colombo: { priceUSD: 55, time: "1h 30m", distance: "80 km" }
@@ -129,9 +129,9 @@ export const HOTEL_TIERS = {
   },
   luxury: {
     id: "luxury",
-    name: "Luxury Boutique",
+    name: "Premium Boutique",
     pricePerNightUSD: 140,
-    description: "Premium 4/5-star boutique hotels, luxury eco-lodges, infinity pools, and fine dining.",
+    description: "Premium 4/5-star boutique hotels, eco-lodges, infinity pools, and fine dining.",
     hotels: {
       negombo: "Jetwing Blue Resort",
       sigiriya: "Heritance Kandalama (Eco-Luxury)",

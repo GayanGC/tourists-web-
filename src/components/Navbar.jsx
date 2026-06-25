@@ -23,7 +23,7 @@ export default function Navbar() {
   ];
 
   const handleWhatsAppChat = () => {
-    const message = encodeURIComponent("Hello Tharindu Tours! I'm interested in booking a tourist van in Sri Lanka.");
+    const message = encodeURIComponent("Hello Premier Lanka Tours! I'm interested in booking a private van in Sri Lanka.");
     window.open(`https://wa.me/${DRIVER_CONTACT}?text=${message}`, '_blank');
   };
 
@@ -54,14 +54,14 @@ export default function Navbar() {
           {/* Logo */}
           <a href="#home" onClick={(e) => handleLinkClick(e, '#home')} className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/30 group-hover:scale-105 transition-transform duration-300">
-              <span className="text-white font-bold text-xl tracking-tight">TT</span>
+              <span className="text-white font-bold text-sm tracking-tight">PLT</span>
             </div>
             <div>
               <span className="text-lg font-bold text-white tracking-wider block leading-none font-display">
-                THARINDU TOURS
+                PREMIER LANKA TOURS
               </span>
               <span className="text-[10px] text-amber-400 font-medium tracking-widest uppercase">
-                Tours & Transfers
+                Private Van & Transfers
               </span>
             </div>
           </a>

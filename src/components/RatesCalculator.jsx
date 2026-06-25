@@ -154,7 +154,7 @@ export default function RatesCalculator({ onBookTransfer, triggerToast }) {
               <h4 className="text-lg font-bold text-slate-300 mt-6 leading-tight">
                 {startName} to {destData?.name}
               </h4>
-              <p className="text-slate-400 text-xs mt-1">Toyota KDH Luxury Van</p>
+              <p className="text-slate-400 text-xs mt-1">Toyota KDH — Private High-Roof Van</p>
 
               {/* Price Display */}
               <div className="my-8">
