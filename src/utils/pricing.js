@@ -226,4 +226,15 @@ export const PRESET_ROUTES = [
   }
 ];
 
-export const DRIVER_CONTACT = "+94771234567"; // Mock driver WhatsApp number (Sri Lanka format)
+// ── Contact Details ──────────────────────────────────────────────────────────
+// WhatsApp API format: country code + number, no '+' or leading zero
+export const DRIVER_CONTACT = "94774891160";
+
+// Human-readable display format shown in the UI
+export const DRIVER_CONTACT_DISPLAY = "+94 77 489 1160";
+
+// Business email
+export const DRIVER_EMAIL = "lankatoursp@gmail.com";
+
+// Headquarters / base location
+export const DRIVER_LOCATION = "Wijepura, Anuradhapura, Sri Lanka";

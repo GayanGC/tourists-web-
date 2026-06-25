@@ -8,7 +8,7 @@ import ReviewPortal from './components/ReviewPortal';
 import BookingModal from './components/BookingModal';
 import Toast from './components/Toast';
 import { Phone, Mail, MapPin, ArrowUp, Heart } from 'lucide-react';
-import { DRIVER_CONTACT } from './utils/pricing';
+import { DRIVER_CONTACT, DRIVER_CONTACT_DISPLAY, DRIVER_EMAIL, DRIVER_LOCATION } from './utils/pricing';
 
 export default function App() {
   const [toasts, setToasts] = useState([]);
@@ -138,7 +138,7 @@ export default function App() {
                       rel="noopener noreferrer"
                       className="text-white font-semibold hover:text-emerald-400 transition-colors"
                     >
-                      {DRIVER_CONTACT} (Direct Line)
+                      {DRIVER_CONTACT_DISPLAY} (Direct Line)
                     </a>
                   </div>
                 </li>
@@ -150,10 +150,10 @@ export default function App() {
                       Email Bookings
                     </span>
                     <a
-                      href="mailto:bookings@premierlankatours.com"
+                      href={`mailto:${DRIVER_EMAIL}`}
                       className="text-white font-semibold hover:text-emerald-400 transition-colors"
                     >
-                      bookings@premierlankatours.com
+                      {DRIVER_EMAIL}
                     </a>
                   </div>
                 </li>
@@ -165,7 +165,7 @@ export default function App() {
                       Base Location
                     </span>
                     <span className="text-slate-300">
-                      Negombo Road, Katunayake, Sri Lanka (BIA Airport Base)
+                      {DRIVER_LOCATION}
                     </span>
                   </div>
                 </li>

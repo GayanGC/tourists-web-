@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, PhoneCall } from 'lucide-react';
-import { DRIVER_CONTACT } from '../utils/pricing';
+import { DRIVER_CONTACT, DRIVER_CONTACT_DISPLAY } from '../utils/pricing';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function Navbar() {
   ];
 
   const handleWhatsAppChat = () => {
-    const message = encodeURIComponent("Hello Premier Lanka Tours! I'm interested in booking a private van in Sri Lanka.");
+    const message = encodeURIComponent(`Hello Premier Lanka Tours! I'm interested in booking a private vehicle in Sri Lanka. (Reached via ${DRIVER_CONTACT_DISPLAY})`);
     window.open(`https://wa.me/${DRIVER_CONTACT}?text=${message}`, '_blank');
   };
 
