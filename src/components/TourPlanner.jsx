@@ -1,16 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Check, ArrowRight } from 'lucide-react';
+import { Compass, Check, ArrowRight, Users, Briefcase, Mountain } from 'lucide-react';
 import SriLankaMap from './SriLankaMap';
-import { DESTINATIONS, PRESET_ROUTES, EXCHANGE_RATE } from '../utils/pricing';
+import { DESTINATIONS, PRESET_ROUTES, EXCHANGE_RATE, VEHICLES } from '../utils/pricing';
+
+// Color palette mapping per vehicle color key
+const colorMap = {
+  amber: {
+    border: 'border-amber-500',
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-400',
+    badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    ring: 'ring-amber-500/30'
+  },
+  emerald: {
+    border: 'border-emerald-500',
+    bg: 'bg-emerald-500/10',
+    text: 'text-emerald-400',
+    badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    ring: 'ring-emerald-500/30'
+  },
+  orange: {
+    border: 'border-orange-500',
+    bg: 'bg-orange-500/10',
+    text: 'text-orange-400',
+    badge: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
+    ring: 'ring-orange-500/30'
+  }
+};
+
+// KDH base rate per day for tour (per PRESET_ROUTES costPerDayUSD)
+const KDH_RATE_PRESET_1 = 65;
+const KDH_RATE_PRESET_2 = 60;
+const KDH_RATE_CUSTOM = 65;
 
 export default function TourPlanner({ onBookTour, triggerToast }) {
-  const [plannerType, setPlannerType] = useState('preset'); // 'preset' or 'custom'
+  const [plannerType, setPlannerType] = useState('preset');
   const [selectedPreset, setSelectedPreset] = useState('route2');
   const [startPoint, setStartPoint] = useState('bia');
+  const [selectedVehicleId, setSelectedVehicleId] = useState('kdh');
 
   // Custom Checklist State
   const [customStops, setCustomStops] = useState(['negombo', 'sigiriya', 'kandy']);
   const [customDays, setCustomDays] = useState(5);
+
+  const selectedVehicle = VEHICLES.find(v => v.id === selectedVehicleId) || VEHICLES[2];
 
   // Helper: Get active stops list based on planner type
   const getActiveStops = () => {
@@ -33,11 +66,13 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
   const activeStops = getActiveStops();
   const totalDays = getTotalDays();
 
-  // Pricing: Van & Driver rate per day only (fuel, tolls, parking, driver included)
-  const vehicleRatePerDay = plannerType === 'preset'
-    ? (selectedPreset === 'route1' ? 65 : 60)
-    : 65;
+  // KDH base rate per day
+  const kdhBaseRatePerDay = plannerType === 'preset'
+    ? (selectedPreset === 'route1' ? KDH_RATE_PRESET_1 : KDH_RATE_PRESET_2)
+    : KDH_RATE_CUSTOM;
 
+  // Apply vehicle multiplier
+  const vehicleRatePerDay = Math.round(kdhBaseRatePerDay * selectedVehicle.priceMultiplier);
   const grandTotalUSD = vehicleRatePerDay * totalDays;
 
   // Toggle stop in custom checklist
@@ -71,8 +106,9 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
       startPoint,
       stops: activeStops,
       days: totalDays,
-      priceUSD: grandTotalUSD,
-      vehicleRatePerDay
+      vehicle: selectedVehicle,
+      vehicleRatePerDay,
+      priceUSD: grandTotalUSD
     });
   };
 
@@ -91,7 +127,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
           </h2>
           <div className="h-1 w-20 bg-emerald-500 mx-auto rounded-full"></div>
           <p className="text-slate-400 mt-6 text-lg leading-relaxed">
-            Choose a curated preset loop or design your own Sri Lankan itinerary. Pick your stops, adjust the number of days, and watch your private van quote update instantly alongside the live route map.
+            Choose a curated preset loop or design your own Sri Lankan itinerary. Select your vehicle, pick stops, adjust days, and watch your private quote update live.
           </p>
         </div>
 
@@ -99,6 +135,73 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Configurator Column */}
           <div className="lg:col-span-7 space-y-8">
+
+            {/* ── VEHICLE SELECTOR ── */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">
+                Select Your Vehicle
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {VEHICLES.map((vehicle) => {
+                  const isSelected = selectedVehicleId === vehicle.id;
+                  const c = colorMap[vehicle.color] || colorMap.emerald;
+                  return (
+                    <button
+                      key={vehicle.id}
+                      onClick={() => setSelectedVehicleId(vehicle.id)}
+                      className={`relative text-left p-4 rounded-2xl border-2 transition-all duration-300 focus:outline-none ${
+                        isSelected
+                          ? `${c.border} ${c.bg} ring-2 ${c.ring}`
+                          : 'border-slate-700 bg-slate-900/30 hover:border-slate-600 hover:bg-slate-900/50'
+                      }`}
+                    >
+                      {/* Tour-only badge */}
+                      {vehicle.tourOnly && (
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-orange-500 text-white text-[8px] font-bold uppercase rounded-full tracking-wider whitespace-nowrap flex items-center gap-0.5">
+                          <Mountain className="w-2.5 h-2.5" /> Tours Only
+                        </span>
+                      )}
+                      {vehicle.id === 'kdh' && (
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-emerald-500 text-white text-[8px] font-bold uppercase rounded-full tracking-wider whitespace-nowrap">
+                          Popular
+                        </span>
+                      )}
+
+                      <div className="text-2xl mb-2 leading-none">{vehicle.emoji}</div>
+                      <h5 className={`font-bold text-xs leading-tight mb-0.5 ${isSelected ? 'text-white' : 'text-slate-300'}`}>
+                        {vehicle.name}
+                      </h5>
+                      <p className={`text-[10px] leading-tight ${isSelected ? c.text : 'text-slate-500'}`}>
+                        {vehicle.type}
+                      </p>
+
+                      <div className="mt-2 space-y-1">
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                          <Users className="w-2.5 h-2.5 shrink-0" />
+                          <span>{vehicle.pax}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                          <Briefcase className="w-2.5 h-2.5 shrink-0" />
+                          <span className="truncate">{vehicle.luggage}</span>
+                        </div>
+                      </div>
+
+                      {/* Multiplier badge */}
+                      <div className={`mt-2 pt-2 border-t ${isSelected ? 'border-slate-600' : 'border-slate-800'}`}>
+                        <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? c.text : 'text-slate-500'}`}>
+                          {vehicle.priceMultiplier === 1
+                            ? 'Base Rate'
+                            : vehicle.priceMultiplier < 1
+                            ? `${Math.round((1 - vehicle.priceMultiplier) * 100)}% Less`
+                            : `+${Math.round((vehicle.priceMultiplier - 1) * 100)}% More`}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Planner Type Tabs */}
             <div className="flex p-1 bg-slate-950/60 border border-slate-800 rounded-2xl">
               <button
@@ -125,8 +228,8 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
 
             {/* Inputs Wrapper */}
             <div className="bg-slate-800/30 border border-slate-700/60 backdrop-blur-sm p-6 sm:p-8 rounded-3xl space-y-6">
-              
-              {/* Pickup location for both */}
+
+              {/* Pickup location */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                   Start From
@@ -184,7 +287,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
                         <p className="text-slate-400 text-xs leading-relaxed">
                           {route.description}
                         </p>
-                        
+
                         {/* Preset destinations trail */}
                         <div className="mt-3.5 flex flex-wrap items-center gap-1.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
                           <span>{startPoint === 'bia' ? 'BIA' : 'Colombo'}</span>
@@ -250,7 +353,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
                           >
                             <span className="text-xs font-medium">{dest.name}</span>
                             <div
-                              className={`w-4.5 h-4.5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
+                              className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
                                 isChecked
                                   ? 'bg-emerald-500 border-emerald-400 text-slate-900'
                                   : 'border-slate-600 bg-slate-950'
@@ -269,17 +372,17 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
               {/* Inclusions Note */}
               <div className="border-t border-slate-700/50 pt-5">
                 <div className="p-4 bg-emerald-950/20 border border-emerald-900/30 rounded-xl text-[11px] text-emerald-300 leading-relaxed">
-                  <span className="font-bold text-emerald-400 block mb-1">✅ What's included in the van rate:</span>
-                  Private van & driver · Fuel costs · Expressway tolls · Airport parking · Driver accommodation between destinations. Hotel bookings are arranged independently by you.
+                  <span className="font-bold text-emerald-400 block mb-1">✅ What's included in the vehicle rate:</span>
+                  Private {selectedVehicle.name} &amp; driver · Fuel costs · Expressway tolls · Airport parking · Driver accommodation. Hotel bookings are arranged independently by you.
                 </div>
               </div>
             </div>
 
-            {/* Price Breakdown and Booking summary */}
+            {/* Price Breakdown and Booking Summary */}
             <div className="bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-6">
               <div className="text-left w-full">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
-                  Private Van — All-In Driver Quote
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                  {selectedVehicle.emoji} {selectedVehicle.name} — All-In Driver Quote
                 </span>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-emerald-400 text-2xl font-bold font-display">$</span>
@@ -293,12 +396,15 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
                 </p>
 
                 {/* Micro Breakout */}
-                <div className="mt-4 flex gap-4 text-[10px] text-slate-400 font-medium">
+                <div className="mt-4 flex flex-wrap gap-4 text-[10px] text-slate-400 font-medium">
                   <div>
-                    Van & Driver: <span className="text-white font-bold">${vehicleRatePerDay}/day</span>
+                    Rate: <span className="text-white font-bold">${vehicleRatePerDay}/day</span>
                   </div>
                   <div>
-                    {totalDays} Days: <span className="text-white font-bold">${grandTotalUSD} total</span>
+                    Duration: <span className="text-white font-bold">{totalDays} days</span>
+                  </div>
+                  <div>
+                    Total: <span className="text-white font-bold">${grandTotalUSD} USD</span>
                   </div>
                 </div>
               </div>

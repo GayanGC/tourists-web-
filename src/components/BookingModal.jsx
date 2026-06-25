@@ -42,8 +42,10 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
     if (bookingDetails.type === 'transfer') {
       const start = START_COORDS[bookingDetails.startPoint]?.name || bookingDetails.startPoint;
       const dest = DESTINATIONS[bookingDetails.destination]?.name || bookingDetails.destination;
+      const veh = bookingDetails.vehicle;
       
       text += `🚍 *Service Type:* Flat Airport Transfer\n`;
+      text += `🚗 *Selected Vehicle:* ${veh ? `${veh.emoji} ${veh.name} (${veh.type})` : 'Toyota KDH Van'}\n`;
       text += `📍 *From:* ${start}\n`;
       text += `📍 *To:* ${dest}\n`;
       text += `⏱️ *Est. Duration:* ${bookingDetails.time}\n`;
@@ -51,17 +53,20 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
     } else {
       const start = START_COORDS[bookingDetails.startPoint]?.name || bookingDetails.startPoint;
       const stopsNames = bookingDetails.stops.map(s => DESTINATIONS[s]?.name || s).join(' ➔ ');
+      const veh = bookingDetails.vehicle;
       
-      text += `🚍 *Service Type:* Multi-Day Private Van Tour (${bookingDetails.plannerType === 'preset' ? 'Curated Loop' : 'Custom Route'})\n`;
+      text += `🚍 *Service Type:* Multi-Day Private Tour (${bookingDetails.plannerType === 'preset' ? 'Curated Loop' : 'Custom Route'})\n`;
+      text += `🚗 *Selected Vehicle:* ${veh ? `${veh.emoji} ${veh.name} (${veh.type})` : 'Toyota KDH Van'}\n`;
       text += `🛫 *Start Point:* ${start}\n`;
       text += `📍 *Stops:* ${stopsNames}\n`;
       text += `⏳ *Duration:* ${bookingDetails.days} Days\n\n`;
     }
 
-    text += `💰 *Private Van — All-Inclusive Flat Quote:*\n`;
+    text += `💰 *Private Vehicle — All-Inclusive Flat Quote:*\n`;
     text += `• *USD Rate:* $${bookingDetails.priceUSD} USD\n`;
     text += `• *LKR Rate:* LKR ${(bookingDetails.priceUSD * EXCHANGE_RATE).toLocaleString()} LKR\n`;
-    text += `_(Includes private Toyota KDH van, driver, fuel, expressway tolls, airport parking & driver accommodation)_\n\n`;
+    const vehName = bookingDetails.vehicle?.name || 'Toyota KDH van';
+    text += `_(Includes ${vehName}, driver, fuel, expressway tolls, airport parking & driver accommodation)_\n\n`;
 
     if (formData.notes.trim()) {
       text += `💬 *Special Requests:* ${formData.notes}\n`;
@@ -125,6 +130,14 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
                   </span>
                 </div>
                 <div>
+                  <span className="text-slate-400">Vehicle:</span>{' '}
+                  <span className="font-semibold text-white">
+                    {bookingDetails.vehicle
+                      ? `${bookingDetails.vehicle.emoji} ${bookingDetails.vehicle.name} (${bookingDetails.vehicle.type})`
+                      : 'Toyota KDH Van'}
+                  </span>
+                </div>
+                <div>
                   <span className="text-slate-400">Distance / Time:</span>{' '}
                   <span className="font-semibold text-white">
                     {bookingDetails.distance} ({bookingDetails.time})
@@ -140,15 +153,23 @@ export default function BookingModal({ isOpen, onClose, bookingDetails, triggerT
                   </span>
                 </div>
                 <div>
+                  <span className="text-slate-400">Vehicle:</span>{' '}
+                  <span className="font-semibold text-white">
+                    {bookingDetails.vehicle
+                      ? `${bookingDetails.vehicle.emoji} ${bookingDetails.vehicle.name} (${bookingDetails.vehicle.type})`
+                      : 'Toyota KDH Van'}
+                  </span>
+                </div>
+                <div>
                   <span className="text-slate-400">Duration:</span>{' '}
                   <span className="font-semibold text-white">
                     {bookingDetails.days} Days
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Van Rate:</span>{' '}
+                  <span className="text-slate-400">Rate:</span>{' '}
                   <span className="font-semibold text-white">
-                    ${bookingDetails.vehicleRatePerDay}/day (private van & driver)
+                    ${bookingDetails.vehicleRatePerDay}/day (vehicle & driver)
                   </span>
                 </div>
               </div>

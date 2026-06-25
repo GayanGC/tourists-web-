@@ -92,6 +92,63 @@ export const START_COORDS = {
   colombo: { name: "Colombo City", x: 120, y: 370 }
 };
 
+// Fleet vehicles – priceMultiplier is applied against KDH base rates
+// tourOnly: true means the vehicle is NOT available for Airport Transfers
+export const VEHICLES = [
+  {
+    id: "wagon_r",
+    name: "Suzuki Wagon R",
+    type: "Budget Hatchback",
+    emoji: "🚗",
+    tagline: "Compact & economical",
+    priceMultiplier: 0.65,
+    pax: "1–2 passengers",
+    luggage: "Light luggage (1–2 bags)",
+    features: ["Fuel efficient", "City transfers", "Easy parking"],
+    color: "amber",
+    tourOnly: false
+  },
+  {
+    id: "premio",
+    name: "Toyota Premio",
+    type: "Premium Sedan",
+    emoji: "🚙",
+    tagline: "Comfortable & refined",
+    priceMultiplier: 0.80,
+    pax: "3–4 passengers",
+    luggage: "Medium luggage (3–4 bags)",
+    features: ["A/C sedan", "Smooth highways", "Great for families"],
+    color: "emerald",
+    tourOnly: false
+  },
+  {
+    id: "kdh",
+    name: "Toyota KDH Van",
+    type: "Spacious High-Roof",
+    emoji: "🚐",
+    tagline: "Our most popular choice",
+    priceMultiplier: 1.00,
+    pax: "Up to 9 passengers",
+    luggage: "Heavy luggage (up to 10 bags)",
+    features: ["Dual A/C zones", "High roof", "USB charging"],
+    color: "emerald",
+    tourOnly: false
+  },
+  {
+    id: "hilux",
+    name: "Toyota Hilux",
+    type: "Adventure 4×4 Pickup",
+    emoji: "🛻",
+    tagline: "Built for rugged terrain",
+    priceMultiplier: 1.20,
+    pax: "2–4 passengers",
+    luggage: "Gear & adventure bags",
+    features: ["4WD off-road", "Mountain terrain", "Adventure ready"],
+    color: "orange",
+    tourOnly: true  // Strictly Multi-Day Tours only — NOT for Airport Transfers
+  }
+];
+
 export const HOTEL_TIERS = {
   budget: {
     id: "budget",
