@@ -239,14 +239,15 @@ export default function ReviewPortal({ triggerToast }) {
           'Accept':        'application/json',
         },
         body: JSON.stringify({
-          _subject:      `⭐ New Review — ${reviewEntry.name} (${reviewEntry.rating}/5 stars)`,
-          customerName:  reviewEntry.name,
-          country:       reviewEntry.country,
-          rating:        `${reviewEntry.rating} / 5 stars`,
-          reviewContent: reviewEntry.comment,
-          hasPhoto:      formData.image ? 'Yes' : 'No',
-          submittedAt:   new Date().toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' }),
-          adminNote:     `To approve, open: ${window.location.origin}${window.location.pathname}?admin=true`,
+          _subject:     `New Website Review from ${reviewEntry.name}`,
+          name:         reviewEntry.name,
+          country:      reviewEntry.country,
+          rating:       `${reviewEntry.rating} / 5 stars`,
+          text:         reviewEntry.comment,
+          comment:      reviewEntry.comment,
+          message:      reviewEntry.comment,
+          submittedAt:  new Date().toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' }),
+          adminLink:    `${window.location.origin}${window.location.pathname}?admin=true`,
         }),
       });
 
