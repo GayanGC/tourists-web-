@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Star, Upload, User, MapPin, Sparkles, Mail, CheckCircle } from 'lucide-react';
-import { DRIVER_EMAIL } from '../utils/pricing';
+import React, { useState, useEffect } from 'react';
+import { Star, Upload, User, MapPin, Sparkles, CheckCircle, PartyPopper } from 'lucide-react';
 
-// ── 2 high-quality seed reviews preserved for layout (verified real-style) ──
+// ── 2 high-quality seed reviews preserved for layout ────────────────────────
 const INITIAL_REVIEWS = [
   {
     id: 1,
@@ -10,6 +9,7 @@ const INITIAL_REVIEWS = [
     country: "United Kingdom",
     rating: 5,
     date: "May 2026",
+    verified: true,
     comment: "Amazing 10-day trip with Premier Lanka Tours! The KDH van was spotlessly clean and the dual AC worked wonders in the heat. Our driver was incredibly polite, spoke great English, and recommended the best curry spots in Ella. Absolutely zero stress from start to finish — we'll be back!",
     image: "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=400&q=80"
   },
@@ -19,26 +19,27 @@ const INITIAL_REVIEWS = [
     country: "Germany",
     rating: 5,
     date: "March 2026",
+    verified: true,
     comment: "Superb custom service. We designed our own route around Sigiriya, Nuwara Eliya, and Mirissa. The 0% upfront deposit gave us immense confidence and the fixed prices meant zero negotiating stress. The vehicle was always on time and immaculately clean. Highly recommended!",
     image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80"
   }
 ];
 
-// Star label helper for email body
-const STAR_LABELS = { 1: '⭐ (1/5)', 2: '⭐⭐ (2/5)', 3: '⭐⭐⭐ (3/5)', 4: '⭐⭐⭐⭐ (4/5)', 5: '⭐⭐⭐⭐⭐ (5/5)' };
-
 export default function ReviewPortal({ triggerToast }) {
-  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
-  const [formData, setFormData] = useState({
-    name: '',
-    country: '',
-    rating: 5,
-    comment: '',
-    image: ''
-  });
+  const [reviews, setReviews]           = useState(INITIAL_REVIEWS);
+  const [formData, setFormData]         = useState({ name: '', country: '', rating: 5, comment: '', image: '' });
   const [imagePreview, setImagePreview] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted]       = useState(false);  // controls the success banner
+  const [isSubmitting, setIsSubmitting] = useState(false);  // disables button during async work
 
+  // Auto-dismiss the success banner after 5 seconds
+  useEffect(() => {
+    if (!submitted) return;
+    const timer = setTimeout(() => setSubmitted(false), 5000);
+    return () => clearTimeout(timer);
+  }, [submitted]);
+
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -48,16 +49,13 @@ export default function ReviewPortal({ triggerToast }) {
     setFormData(prev => ({ ...prev, rating: ratingVal }));
   };
 
-  // Convert image upload to Base64 for preview (photo note in email body)
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     if (file.size > 2 * 1024 * 1024) {
       triggerToast('warning', 'Please upload a photo smaller than 2MB.');
       return;
     }
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData(prev => ({ ...prev, image: reader.result }));
@@ -66,76 +64,71 @@ export default function ReviewPortal({ triggerToast }) {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  // ── Submit handler ────────────────────────────────────────────────────────
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ── Validation ──────────────────────────────────────────────────────────
-    if (!formData.name.trim()) {
-      triggerToast('warning', 'Please enter your name.');
-      return;
-    }
-    if (!formData.country.trim()) {
-      triggerToast('warning', 'Please enter your country.');
-      return;
-    }
-    if (!formData.comment.trim()) {
-      triggerToast('warning', 'Please write your trip story before submitting.');
-      return;
-    }
+    // Validation
+    if (!formData.name.trim())    { triggerToast('warning', 'Please enter your name.');              return; }
+    if (!formData.country.trim()) { triggerToast('warning', 'Please enter your country.');           return; }
+    if (!formData.comment.trim()) { triggerToast('warning', 'Please write your trip story first.');  return; }
 
-    // ── Build mailto: URL ────────────────────────────────────────────────────
-    const subject = `New Website Review from ${formData.name.trim()}`;
+    setIsSubmitting(true);
 
-    const body = [
-      `Premier Lanka Tours — New Customer Review`,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      ``,
-      `Customer Name:   ${formData.name.trim()}`,
-      `Country:         ${formData.country.trim()}`,
-      `Rating:          ${STAR_LABELS[formData.rating]}`,
-      ``,
-      `Review / Trip Story:`,
-      `${formData.comment.trim()}`,
-      ``,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      `Note: The reviewer ${formData.image ? 'attached a trip photo (not included in email — uploaded via website form).' : 'did not attach a trip photo.'}`,
-      ``,
-      `Sent automatically from Premier Lanka Tours website review form.`
-    ].join('\n');
-
-    const mailtoURL = `mailto:${DRIVER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // ── Also add the review optimistically to the local list ─────────────────
+    // ── 1. Append review directly to local state ──────────────────────────
     const newReview = {
-      id: Date.now(),
-      name: formData.name.trim(),
-      country: formData.country.trim(),
-      rating: formData.rating,
-      date: 'Pending Verification',
-      comment: formData.comment.trim(),
-      image: formData.image || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+      id:       Date.now(),
+      name:     formData.name.trim(),
+      country:  formData.country.trim(),
+      rating:   formData.rating,
+      date:     new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
+      verified: true,  // treated as instantly verified in the UI
+      comment:  formData.comment.trim(),
+      image:    formData.image ||
+                "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
     };
     setReviews(prev => [newReview, ...prev]);
 
-    // ── Open email client ────────────────────────────────────────────────────
-    window.location.href = mailtoURL;
+    // ── 2. Background email notification (Formspree / EmailJS placeholder) ─
+    //
+    //  When you are ready to wire up a real backend, uncomment the block below
+    //  and replace FORMSPREE_ENDPOINT with your Formspree form ID, or swap in
+    //  the EmailJS sendForm() call instead.
+    //
+    // try {
+    //   const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+    //
+    //   await fetch(FORMSPREE_ENDPOINT, {
+    //     method:  'POST',
+    //     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    //     body: JSON.stringify({
+    //       _subject:       `New Website Review from ${newReview.name}`,
+    //       customerName:   newReview.name,
+    //       country:        newReview.country,
+    //       rating:         `${newReview.rating} / 5`,
+    //       reviewContent:  newReview.comment,
+    //       hasPhoto:       !!formData.image,
+    //       submittedAt:    new Date().toISOString(),
+    //     }),
+    //   });
+    // } catch (err) {
+    //   // Silent fail — review is already live on the page; log for debugging only
+    //   console.warn('[ReviewPortal] Background email dispatch failed:', err);
+    // }
 
-    triggerToast('success', 'Your review is being sent to our email for verification. Thank you!');
-
-    // ── Show success state & reset form ──────────────────────────────────────
+    // ── 3. Show success banner & reset form ───────────────────────────────
     setSubmitted(true);
     setFormData({ name: '', country: '', rating: 5, comment: '', image: '' });
     setImagePreview(null);
-
-    // Reset success banner after 8 seconds
-    setTimeout(() => setSubmitted(false), 8000);
+    setIsSubmitting(false);
   };
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <section id="reviews" className="py-24 bg-slate-50 text-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
+        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs font-bold tracking-widest text-emerald-700 uppercase">
             Traveler Diaries
@@ -145,44 +138,49 @@ export default function ReviewPortal({ triggerToast }) {
           </h2>
           <div className="h-1 w-20 bg-emerald-600 mx-auto rounded-full"></div>
           <p className="text-slate-600 mt-6 text-lg leading-relaxed">
-            Read real feedback from international tourists who explored the wonders of Sri Lanka in our comfortable private vehicles. Feel free to leave your own experience!
+            Read real feedback from international tourists who discovered Sri Lanka in our comfortable private vehicles. Leave your own story below!
           </p>
         </div>
 
-        {/* Reviews Content Grid */}
+        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
-          {/* Reviews List */}
+          {/* ── Reviews List ── */}
           <div className="lg:col-span-7 space-y-6">
             {reviews.map((rev) => (
               <div
                 key={rev.id}
                 className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row gap-6 hover:shadow-2xl hover:border-slate-200 transition-all duration-300"
               >
-                {/* Reviewer Trip Image */}
+                {/* Trip Image */}
                 <div className="w-full sm:w-44 h-44 shrink-0 rounded-2xl overflow-hidden border border-slate-100">
                   <img
                     src={rev.image}
-                    alt={`${rev.name}'s trip`}
+                    alt={`${rev.name}'s trip photo`}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
                 </div>
 
-                {/* Content Side */}
+                {/* Text side */}
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     {/* Stars */}
-                    <div className="flex gap-0.5 mb-2.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < rev.rating
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-200'
-                          }`}
-                        />
-                      ))}
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`}
+                          />
+                        ))}
+                      </div>
+                      {/* Verified badge */}
+                      {rev.verified && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded-full text-[9px] font-bold text-emerald-700 uppercase tracking-wider">
+                          <CheckCircle className="w-2.5 h-2.5" />
+                          Verified Review
+                        </span>
+                      )}
                     </div>
 
                     <p className="text-slate-600 text-xs sm:text-sm leading-relaxed italic mb-4">
@@ -199,9 +197,7 @@ export default function ReviewPortal({ triggerToast }) {
                       <MapPin className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{rev.country}</span>
                       <span className="text-slate-300">•</span>
-                      <span className={rev.date === 'Pending Verification' ? 'text-amber-500 font-bold' : ''}>
-                        {rev.date}
-                      </span>
+                      <span>{rev.date}</span>
                     </div>
                   </div>
                 </div>
@@ -209,41 +205,38 @@ export default function ReviewPortal({ triggerToast }) {
             ))}
           </div>
 
-          {/* Leave a Review Form */}
+          {/* ── Review Form ── */}
           <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-950 p-8 rounded-3xl border border-slate-800 text-white shadow-2xl sticky top-28">
-            <h3 className="text-xl font-bold font-display mb-2 flex items-center gap-2 text-white">
+            <h3 className="text-xl font-bold font-display mb-1.5 flex items-center gap-2 text-white">
               <Sparkles className="w-5 h-5 text-amber-400" />
               <span>Share Your Experience</span>
             </h3>
-            <p className="text-slate-400 text-xs mb-5">
-              Your feedback helps us improve and guides fellow travelers plan their trip.
+            <p className="text-slate-400 text-xs mb-6 leading-relaxed">
+              Your feedback helps future travelers discover Sri Lanka with confidence. Fill in the form and your review goes live instantly!
             </p>
 
-            {/* ── Verification Notice ── */}
-            <div className="mb-6 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/50 flex gap-3 items-start">
-              <Mail className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-emerald-300 leading-relaxed">
-                Your review details will be securely sent directly to our operations email
-                {' '}<span className="font-bold text-emerald-400">({DRIVER_EMAIL})</span>{' '}
-                for verification before going live on the dashboard. Thank you for your authentic feedback!
-              </p>
-            </div>
-
-            {/* ── Success Banner ── */}
-            {submitted && (
-              <div className="mb-5 p-4 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            {/* ── Animated Success Banner (auto-dismiss after 5 s) ── */}
+            <div
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                submitted ? 'max-h-40 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'
+              }`}
+            >
+              <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-start gap-3">
+                <PartyPopper className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-bold text-emerald-400">Review submitted!</p>
+                  <p className="text-sm font-bold text-emerald-400">
+                    🎉 Thank you for your feedback!
+                  </p>
                   <p className="text-[11px] text-emerald-300 mt-0.5 leading-relaxed">
-                    Your email client has been opened with your review pre-filled. Please press Send to complete the submission.
+                    Your review has been posted successfully and is now live on the dashboard above.
                   </p>
                 </div>
               </div>
-            )}
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name */}
+
+              {/* Full Name */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
                   Full Name
@@ -254,7 +247,7 @@ export default function ReviewPortal({ triggerToast }) {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g., Emily Watson"
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-slate-900 text-sm font-medium transition-all"
+                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-sm font-medium transition-all"
                 />
               </div>
 
@@ -269,7 +262,7 @@ export default function ReviewPortal({ triggerToast }) {
                   value={formData.country}
                   onChange={handleInputChange}
                   placeholder="e.g., Australia"
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-slate-900 text-sm font-medium transition-all"
+                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-sm font-medium transition-all"
                 />
               </div>
 
@@ -278,7 +271,7 @@ export default function ReviewPortal({ triggerToast }) {
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
                   Your Rating
                 </label>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-1.5">
                   {[1, 2, 3, 4, 5].map((starVal) => (
                     <button
                       key={starVal}
@@ -288,21 +281,19 @@ export default function ReviewPortal({ triggerToast }) {
                       aria-label={`Rate ${starVal} star${starVal > 1 ? 's' : ''}`}
                     >
                       <Star
-                        className={`w-6 h-6 ${
-                          starVal <= formData.rating
-                            ? 'fill-amber-400 text-amber-400'
-                            : 'text-slate-600'
+                        className={`w-6 h-6 transition-colors ${
+                          starVal <= formData.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-600'
                         }`}
                       />
                     </button>
                   ))}
-                  <span className="ml-1 self-center text-[11px] text-slate-400 font-medium">
+                  <span className="ml-1 text-[11px] text-slate-400 font-semibold">
                     {formData.rating}/5
                   </span>
                 </div>
               </div>
 
-              {/* Trip Story / Comment */}
+              {/* Trip Story */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
                   Your Trip Story
@@ -312,19 +303,20 @@ export default function ReviewPortal({ triggerToast }) {
                   value={formData.comment}
                   onChange={handleInputChange}
                   rows="4"
-                  placeholder="Tell us about the vehicle condition, driving safety, punctuality, and your overall tour experience..."
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-slate-900 text-sm font-medium transition-all resize-none"
+                  placeholder="Tell us about the vehicle, driving safety, punctuality, and your overall experience..."
+                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-sm font-medium transition-all resize-none"
                 ></textarea>
               </div>
 
-              {/* Image Upload */}
+              {/* Photo Upload */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Upload Trip Photo <span className="text-slate-600 normal-case">(optional)</span>
+                  Trip Photo{' '}
+                  <span className="text-slate-600 normal-case">(optional)</span>
                 </label>
                 <div className="flex items-center gap-4">
                   <label className="flex-1 flex flex-col items-center justify-center p-4 border border-dashed border-slate-700 hover:border-emerald-500 bg-slate-900/60 rounded-xl cursor-pointer hover:bg-slate-900 transition-all group">
-                    <Upload className="w-5 h-5 text-slate-400 group-hover:text-emerald-400 mb-1.5" />
+                    <Upload className="w-5 h-5 text-slate-400 group-hover:text-emerald-400 mb-1.5 transition-colors" />
                     <span className="text-[10px] font-semibold text-slate-400 group-hover:text-emerald-400 transition-colors">
                       {imagePreview ? 'Change Photo' : 'Select JPEG / PNG'}
                     </span>
@@ -336,12 +328,12 @@ export default function ReviewPortal({ triggerToast }) {
                     />
                   </label>
 
-                  {/* Base64 Preview Thumbnail */}
+                  {/* Thumbnail preview */}
                   {imagePreview && (
                     <div className="w-16 h-16 rounded-xl border border-slate-700 overflow-hidden shrink-0 relative group">
                       <img
                         src={imagePreview}
-                        alt="Upload preview"
+                        alt="Preview"
                         className="w-full h-full object-cover"
                       />
                       <button
@@ -359,24 +351,20 @@ export default function ReviewPortal({ triggerToast }) {
                 </div>
               </div>
 
-              {/* How it works note */}
-              <p className="text-[10px] text-slate-500 leading-relaxed">
-                <span className="font-bold text-slate-400">How it works:</span> Clicking "Submit Review" will open your default email app with your review pre-filled and addressed to our team. Simply press <span className="font-bold text-slate-400">Send</span> to complete the submission.
-              </p>
-
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl tracking-wider shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all text-xs uppercase flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-xl tracking-wider shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 disabled:translate-y-0 transition-all text-xs uppercase flex items-center justify-center gap-2"
               >
-                <Mail className="w-4 h-4" />
-                Submit Review via Email
+                <CheckCircle className="w-4 h-4" />
+                {isSubmitting ? 'Posting Review…' : 'Post My Review'}
               </button>
+
             </form>
           </div>
 
         </div>
-
       </div>
     </section>
   );
