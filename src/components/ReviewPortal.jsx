@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, Upload, User, MapPin, Sparkles, CheckCircle, Loader2, ShieldCheck } from 'lucide-react';
 
 // ── Formspree endpoint — swap in your real Form ID here ─────────────────────
-const FORMSPREE_FORM_ID = "xpzeqgpy";
+const FORMSPREE_FORM_ID = "xykqwzgq";
 const FORMSPREE_URL     = `https://formspree.io/f/${FORMSPREE_FORM_ID}`;
 
 // ── Seed reviews — only shown until real approved reviews come in ─────────────
