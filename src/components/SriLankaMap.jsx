@@ -1,4 +1,3 @@
-import React from 'react';
 import { DESTINATIONS, START_COORDS } from '../utils/pricing';
 
 export default function SriLankaMap({ selectedStops, startPoint }) {

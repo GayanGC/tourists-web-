@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Calendar, User, Phone, FileText, Send, Sparkles } from 'lucide-react';
 import { DRIVER_CONTACT, DESTINATIONS, START_COORDS, EXCHANGE_RATE } from '../utils/pricing';
 
 export default function BookingModal({ isOpen, onClose, bookingDetails, triggerToast }) {
-  if (!isOpen || !bookingDetails) return null;
-
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     startDate: '',
     notes: ''
   });
+
+  if (!isOpen || !bookingDetails) return null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

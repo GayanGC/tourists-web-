@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Star, Upload, User, MapPin, Sparkles, CheckCircle, Loader2,
   ShieldCheck, ThumbsUp, ThumbsDown, Lock, Eye, RefreshCw, X
@@ -14,7 +14,7 @@ const LS_APPROVED = 'plt_approved_reviews';
 
 // ── Safe localStorage helpers ─────────────────────────────────────────────────
 const lsRead  = (key) => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } };
-const lsWrite = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} };
+const lsWrite = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch (err) { /* ignore localStorage block errors */ void err; } };
 
 // ── Curated seed reviews (always visible on the public wall) ──────────────────
 const SEED_REVIEWS = [
@@ -154,31 +154,18 @@ export default function ReviewPortal({ triggerToast }) {
   // ── State ──────────────────────────────────────────────────────────────────
   const [pendingReviews,  setPendingReviews]  = useState(() => lsRead(LS_PENDING));
   const [approvedReviews, setApprovedReviews] = useState(() => lsRead(LS_APPROVED));
-  const [isAdmin,         setIsAdmin]         = useState(false);
+  const [isAdmin,         setIsAdmin]         = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('admin') === 'true';
+    }
+    return false;
+  });
   const [adminPass,       setAdminPass]       = useState('');
   const [showPassPrompt,  setShowPassPrompt]  = useState(false);
   const [formData,        setFormData]        = useState({ name: '', country: '', rating: 5, comment: '', image: '' });
   const [imagePreview,    setImagePreview]    = useState(null);
   const [status,          setStatus]          = useState(STATUS.IDLE);
-
-  // ── Detect ?admin=true in URL ──────────────────────────────────────────────
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === 'true') setIsAdmin(true);
-  }, []);
-
-  // ── Auto-reset banner after 8 s ───────────────────────────────────────────
-  useEffect(() => {
-    if (status === STATUS.IDLE || status === STATUS.LOADING) return;
-    const t = setTimeout(() => {
-      setStatus(STATUS.IDLE);
-      if (status === STATUS.SUCCESS) resetForm();
-    }, 8000);
-    return () => clearTimeout(t);
-  }, [status]);
-
-  // ── Public wall = approved reviews (on top) + seed reviews (always at end) ─
-  const publicWall = [...approvedReviews, ...SEED_REVIEWS];
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   const resetForm = () => {
@@ -192,6 +179,19 @@ export default function ReviewPortal({ triggerToast }) {
   };
 
   const handleRatingChange = (val) => setFormData(prev => ({ ...prev, rating: val }));
+
+  // ── Auto-reset banner after 8 s ───────────────────────────────────────────
+  useEffect(() => {
+    if (status === STATUS.IDLE || status === STATUS.LOADING) return;
+    const t = setTimeout(() => {
+      setStatus(STATUS.IDLE);
+      if (status === STATUS.SUCCESS) resetForm();
+    }, 8000);
+    return () => clearTimeout(t);
+  }, [status]);
+
+  // ── Public wall = approved reviews (on top) + seed reviews (always at end) ─
+  const publicWall = [...approvedReviews, ...SEED_REVIEWS];
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

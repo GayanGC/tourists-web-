@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plane, MapPin, Navigation, Clock, ShieldCheck, ArrowRight, Users, Briefcase } from 'lucide-react';
 import { DESTINATIONS, START_COORDS, EXCHANGE_RATE, VEHICLES } from '../utils/pricing';
 

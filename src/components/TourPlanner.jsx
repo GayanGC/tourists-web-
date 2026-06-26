@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Compass, Check, ArrowRight, Users, Briefcase, Mountain } from 'lucide-react';
 import SriLankaMap from './SriLankaMap';
 import { DESTINATIONS, PRESET_ROUTES, EXCHANGE_RATE, VEHICLES } from '../utils/pricing';
@@ -88,15 +88,24 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
     }
   };
 
-  // Update preset defaults
-  useEffect(() => {
-    if (plannerType === 'preset') {
+  // Update preset defaults and start points
+  const handleSelectPreset = (presetId) => {
+    setSelectedPreset(presetId);
+    const route = PRESET_ROUTES.find(r => r.id === presetId);
+    if (route) {
+      setStartPoint(route.startPoint);
+    }
+  };
+
+  const handleSelectPlannerType = (type) => {
+    setPlannerType(type);
+    if (type === 'preset') {
       const route = PRESET_ROUTES.find(r => r.id === selectedPreset);
       if (route) {
         setStartPoint(route.startPoint);
       }
     }
-  }, [selectedPreset, plannerType]);
+  };
 
   const handleBookClick = () => {
     onBookTour({
@@ -205,7 +214,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
             {/* Planner Type Tabs */}
             <div className="flex p-1 bg-slate-950/60 border border-slate-800 rounded-2xl">
               <button
-                onClick={() => setPlannerType('preset')}
+                onClick={() => handleSelectPlannerType('preset')}
                 className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all ${
                   plannerType === 'preset'
                     ? 'bg-emerald-600 text-white shadow-md'
@@ -215,7 +224,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
                 Curated Preset Loops
               </button>
               <button
-                onClick={() => setPlannerType('custom')}
+                onClick={() => handleSelectPlannerType('custom')}
                 className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all ${
                   plannerType === 'custom'
                     ? 'bg-emerald-600 text-white shadow-md'
@@ -268,7 +277,7 @@ export default function TourPlanner({ onBookTour, triggerToast }) {
                     {PRESET_ROUTES.map((route) => (
                       <div
                         key={route.id}
-                        onClick={() => setSelectedPreset(route.id)}
+                        onClick={() => handleSelectPreset(route.id)}
                         className={`p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${
                           selectedPreset === route.id
                             ? 'border-emerald-500 bg-slate-800/80 shadow-lg'

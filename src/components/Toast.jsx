@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { CheckCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 export default function Toast({ toasts, removeToast }) {
@@ -16,7 +16,7 @@ export default function Toast({ toasts, removeToast }) {
 }
 
 function ToastItem({ toast, onClose }) {
-  const { id, type, message, duration = 4000 } = toast;
+  const { type, message, duration = 4000 } = toast;
 
   useEffect(() => {
     const timer = setTimeout(() => {

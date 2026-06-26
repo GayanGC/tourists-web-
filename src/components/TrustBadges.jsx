@@ -1,5 +1,4 @@
-import React from 'react';
-import { Percent, Shield, ShieldCheck, Languages, Banknote, HelpCircle, Users, Wind, Briefcase, Zap } from 'lucide-react';
+import { Percent, ShieldCheck, Languages, Banknote, Users, Wind, Briefcase, Zap } from 'lucide-react';
 
 const ADVANTAGES = [
   {

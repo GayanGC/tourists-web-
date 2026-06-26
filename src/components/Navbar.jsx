@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, PhoneCall } from 'lucide-react';
 import { DRIVER_CONTACT, DRIVER_CONTACT_DISPLAY } from '../utils/pricing';
 
