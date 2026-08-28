@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start": "node server/index.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "server:dev": "node --watch server/index.js"
+    "server:dev": "node --watch server/index.js",
+    "check-env": "node server/test-connection.js"
   },
   "dependencies": {
     "lucide-react": "^1.21.0",
